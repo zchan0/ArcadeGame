@@ -20,8 +20,8 @@ var Enemy = function() {
     this.velocityX = getRandomInt(1, 3) * BlockSize.width;
 
     // 图片大小
-    this.width = 100;
-    this.height = 170;
+    this.width = 50;
+    this.height = 85;
 };
 
 /**
@@ -46,8 +46,13 @@ Enemy.prototype.update = function(dt) {
 
 // 此为游戏必须的函数，用来在屏幕上画出敌人，
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
+Enemy.prototype.offscreen = function() {
+    if (this.x < 0 || this.x > CanvasSize.width) return true;
+    return false;
+}
 
 const PlayerStartPoint = {
     x: 2 * BlockSize.width,
@@ -72,8 +77,8 @@ var Player = function() {
     this.velocityY = 0;
 
     // 图片大小
-    this.width = 100;
-    this.height = 170;
+    this.width = 50;
+    this.height = 85;
 };
 
 Player.prototype.update = function() {
@@ -131,6 +136,24 @@ Player.prototype.handleInput = function(direction) {
             break;
     }
 };
+/**
+ * 碰撞检测，使用 Circle Collision 的方式
+ * 更多别的方式可参考：https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+ * @param  {} enemy 检测对象
+ */
+Player.prototype.collideWith = function(enemy) {
+    const circle1 = {radius: this.width / 2, x: this.x, y: this.y};
+    const circle2 = {radius: enemy.width / 2, x: enemy.x, y: enemy.y};
+
+    const dx = circle1.x - circle2.x;
+    const dy = circle1.y - circle2.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < circle1.radius + circle2.radius) {
+        return true;
+    }
+    return false;
+};
 
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
@@ -154,6 +177,19 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+/**
+ * 由 engine 在 update 的时候调用
+ * 将 offscreen 的 enemy 可以直接排除
+ */
+function checkCollisions() {
+    for (const enemy of allEnemies) {
+        if (enemy.offscreen()) continue;
+        if (player.collideWith(enemy)) {
+            console.log('collision detected');
+        }
+    }
+}
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
