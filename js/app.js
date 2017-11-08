@@ -79,6 +79,9 @@ var Player = function() {
     // 图片大小
     this.width = 50;
     this.height = 85;
+
+    // 获胜
+    this.hasWon = false;
 };
 
 Player.prototype.update = function() {
@@ -99,6 +102,7 @@ Player.prototype.update = function() {
     }
     if (newY < 0) {
         newY = this.y;
+        this.hasWon = true;
     }
 
     this.x = newX;
@@ -158,6 +162,7 @@ Player.prototype.collideWith = function(enemy) {
 Player.prototype.reset = function() {
     this.x = PlayerStartPoint.x;
     this.y = PlayerStartPoint.y;
+    this.hasWon = false;
 };
 
 // 现在实例化你的所有对象

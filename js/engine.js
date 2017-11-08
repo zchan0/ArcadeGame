@@ -43,7 +43,7 @@ var Engine = (function(global) {
         /* 设置我们的 lastTime 变量，它会被用来决定 main 函数下次被调用的事件。 */
         lastTime = now;
 
-        /* 在浏览准备好调用重绘下一个帧的时候，用浏览器的 requestAnimationFrame 函数
+        /* 在浏览器准备好调用重绘下一个帧的时候，用浏览器的 requestAnimationFrame 函数
          * 来调用这个函数
          */
         win.requestAnimationFrame(main);
@@ -77,6 +77,10 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+        if (player.hasWon) {
+            console.log('you won');
+            reset();
+        }
     }
 
     /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数
@@ -129,7 +133,7 @@ var Engine = (function(global) {
      * 函数调用一次。
      */
     function reset() {
-        // 空操作
+        player.reset();
     }
 
     /* 紧接着我们来加载我们知道的需要来绘制我们游戏关卡的图片。然后把 init 方法设置为回调函数。
