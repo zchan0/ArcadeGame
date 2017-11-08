@@ -124,6 +124,10 @@ Player.prototype.handleInput = function(direction) {
             this.velocityX = 0;
             this.velocityY = Math.abs(this.speedY);
             break;
+        default:
+            this.velocityX = 0;
+            this.velocityY = 0;
+            break;
     }
 };
 
