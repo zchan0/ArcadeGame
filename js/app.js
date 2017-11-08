@@ -43,32 +43,43 @@ Enemy.prototype.update = function(dt) {
     this.x = newX;
 };
 
-// 此为游戏必须的函数，用来在屏幕上画出敌人，
+/**
+ * 绘制 sprite 在 canvas 上
+ */
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+/**
+ * 判断当前是否在 canvas 上
+ */
 Enemy.prototype.offscreen = function() {
     if (this.x < 0 || this.x > CanvasSize.width) return true;
     return false;
 }
 
+/**
+ * 使 enemy 暂停
+ */
 Enemy.prototype.pause = function() {
     this.velocityX = 0;
 }
 
+/**
+ * 使 enemy 恢复速度
+ */
 Enemy.prototype.resume = function() {
     this.velocityX = this.oldVelocityX;
 }
 
+// 定义玩家的初始位置，方便 init 和 reset 
 const PlayerStartPoint = {
     x: 2 * BlockSize.width,
     y: 5 * BlockSize.height
 };
 Object.freeze(PlayerStartPoint);
 
-// 现在实现你自己的玩家类
-// 这个类需要一个 update() 函数， render() 函数和一个 handleInput()函数
+/* 玩家类 */
 var Player = function() {
     this.sprite = 'images/char-cat-girl.png';
     
@@ -91,6 +102,10 @@ var Player = function() {
     this.hasWon = false;
 };
 
+/**
+ * 更新玩家的位置
+ * 碰到四个边界时要特殊处理
+ */
 Player.prototype.update = function() {
     const increX = this.velocityX;
     const increY = this.velocityY;
@@ -123,6 +138,12 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+/**
+ * 根据用户的键盘输入，判断方向，从而设定 x 和 y 方向上的速度
+ * speedX 和 speedY 是绝对值， velocityX 和 velocityY 有方向
+ * 默认情况下玩家保持静止
+ * @param  {} direction 方向键对应的字符串
+ */
 Player.prototype.handleInput = function(direction) {
     switch (direction) {
         case 'left':
@@ -147,6 +168,7 @@ Player.prototype.handleInput = function(direction) {
             break;
     }
 };
+
 /**
  * 碰撞检测，使用 Circle Collision 的方式
  * 更多别的方式可参考：https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
@@ -166,6 +188,9 @@ Player.prototype.collideWith = function(enemy) {
     return false;
 };
 
+/**
+ * 玩家状态重置
+ */
 Player.prototype.reset = function() {
     this.x = PlayerStartPoint.x;
     this.y = PlayerStartPoint.y;
@@ -182,8 +207,11 @@ for (let i = 0; i < EnemyNums; ++i) {
 // 把玩家对象放进一个叫 player 的变量里面
 var player = new Player();
 
-// 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
-// 方法里面。你不需要再更改这段代码了。
+/**
+ * 这段代码监听游戏玩家的键盘点击事件
+ * @param  {} 'keyup' 
+ * @param  {} function(e)
+ */
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -191,7 +219,6 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
