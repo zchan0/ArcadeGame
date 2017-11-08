@@ -155,6 +155,11 @@ Player.prototype.collideWith = function(enemy) {
     return false;
 };
 
+Player.prototype.reset = function() {
+    this.x = PlayerStartPoint.x;
+    this.y = PlayerStartPoint.y;
+};
+
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
 var allEnemies = [];
@@ -186,7 +191,7 @@ function checkCollisions() {
     for (const enemy of allEnemies) {
         if (enemy.offscreen()) continue;
         if (player.collideWith(enemy)) {
-            console.log('collision detected');
+            player.reset();
         }
     }
 }
