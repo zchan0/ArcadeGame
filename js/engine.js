@@ -1,6 +1,6 @@
 /* Engine.js
 * 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
- * 在屏幕上画出出事的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
+ * 在屏幕上画出初始的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
  *
  * 一个游戏引擎的工作过程就是不停的绘制整个游戏屏幕，和小时候你们做的 flipbook 有点像。当
  * 玩家在屏幕上移动的时候，看上去就是图片在移动或者被重绘。但这都是表面现象。实际上是整个屏幕
@@ -43,7 +43,7 @@ var Engine = (function(global) {
         /* 设置我们的 lastTime 变量，它会被用来决定 main 函数下次被调用的事件。 */
         lastTime = now;
 
-        /* 在浏览准备好调用重绘下一个帧的时候，用浏览器的 requestAnimationFrame 函数
+        /* 在浏览器准备好调用重绘下一个帧的时候，用浏览器的 requestAnimationFrame 函数
          * 来调用这个函数
          */
         win.requestAnimationFrame(main);
@@ -55,6 +55,11 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
+
+        // 初始化文本相关属性，方便绘制获胜时的文字
+        ctx.font = '36pt Impact';
+        ctx.textAlign = 'center';
+
         main();
     }
 
@@ -65,7 +70,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* 这个函数会遍历在 app.js 定义的存放所有敌人实例的数组，并且调用他们的 update()
@@ -77,6 +82,13 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+        if (player.hasWon) {
+            pause();
+            congratsPopup();
+            setTimeout(function() {
+                reset();
+            }, 1000 * 2);
+        }
     }
 
     /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数
@@ -129,18 +141,46 @@ var Engine = (function(global) {
      * 函数调用一次。
      */
     function reset() {
-        // 空操作
+        ctx.fillStyle = 'white';
+        ctx.fillText('You Won!', canvas.width / 2, 40);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 0;        
+        ctx.strokeText('You Won!', canvas.width / 2, 40);
+        
+        player.reset();
+        resume();
+    }
+
+    function pause() {
+        allEnemies.forEach(function(enemy) {
+            enemy.pause();
+        });
+    }
+
+    function resume() {
+        allEnemies.forEach(function(enemy) {
+            enemy.resume();
+        })
+    }
+
+    function congratsPopup() {
+        ctx.fillStyle = 'yellow';
+        ctx.fillText('You Won!', canvas.width / 2, 40);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;        
+        ctx.strokeText('You Won!', canvas.width / 2, 40);
     }
 
     /* 紧接着我们来加载我们知道的需要来绘制我们游戏关卡的图片。然后把 init 方法设置为回调函数。
-     * 那么党这些图片都已经加载完毕的时候游戏就会开始。
+     * 那么当这些图片都已经加载完毕的时候游戏就会开始。
      */
     Resources.load([
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png'
     ]);
     Resources.onReady(init);
 
