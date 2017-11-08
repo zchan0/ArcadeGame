@@ -49,9 +49,77 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
 };
 
+const PlayerStartPoint = {
+    x: 2 * BlockSize.width,
+    y: 5 * BlockSize.height
+};
+Object.freeze(PlayerStartPoint);
+
 // 现在实现你自己的玩家类
 // 这个类需要一个 update() 函数， render() 函数和一个 handleInput()函数
+var Player = function() {
+    this.sprite = 'images/char-cat-girl.png';
+    
+    // 起始位置
+    this.x = PlayerStartPoint.x;
+    this.y = PlayerStartPoint.y;
 
+    // 速度：一次恰好向前后或者左右移动一个 block
+    this.speedX = BlockSize.width;
+    this.speedY = BlockSize.height;
+    this.velocityX = 0;
+    this.velocityY = 0;
+
+    // 图片大小
+    this.width = 100;
+    this.height = 170;
+};
+
+Player.prototype.update = function() {
+    const increX = this.velocityX;
+    const increY = this.velocityY;
+
+    let newX = this.x + increX;
+    let newY = this.y + increY;
+
+    // if (newX > CanvasSize.width) {
+    //     newX = 0;
+    // }
+    // if (newX < 0) {
+    //     newX = CanvasSize.width - BlockSize.width;
+    // }
+    // if (newY > CanvasSize.height || newY < 0) {
+    //     newY = this.y;
+    // }
+
+    this.x = newX;
+    this.y = newY;
+};
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.handleInput = function(direction) {
+    switch (direction) {
+        case 'left':
+            this.velocityX = -Math.abs(this.speedX);
+            this.velocityY = 0;
+            break;
+        case 'up':
+            this.velocityX = 0;
+            this.velocityY = -Math.abs(this.speedY);
+            break;
+        case 'right':
+            this.velocityX = Math.abs(this.speedX);
+            this.velocityY = 0;
+            break;
+        case 'down':
+            this.velocityX = 0;
+            this.velocityY = Math.abs(this.speedY);
+            break;
+    }
+};
 
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
@@ -61,7 +129,7 @@ for (let i = 0; i < EnemyNums; ++i) {
 }
 
 // 把玩家对象放进一个叫 player 的变量里面
-
+var player = new Player();
 
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
 // 方法里面。你不需要再更改这段代码了。
