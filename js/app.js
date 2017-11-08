@@ -82,18 +82,24 @@ Player.prototype.update = function() {
     let newX = this.x + increX;
     let newY = this.y + increY;
 
-    // if (newX > CanvasSize.width) {
-    //     newX = 0;
-    // }
-    // if (newX < 0) {
-    //     newX = CanvasSize.width - BlockSize.width;
-    // }
-    // if (newY > CanvasSize.height || newY < 0) {
-    //     newY = this.y;
-    // }
+    if (newX > CanvasSize.width) {
+        newX = 0;
+    }
+    if (newX < 0) {
+        newX = CanvasSize.width - BlockSize.width;
+    }
+    if (newY > PlayerStartPoint.y) {
+        newY = PlayerStartPoint.y;
+    }
+    if (newY < 0) {
+        newY = this.y;
+    }
 
     this.x = newX;
     this.y = newY;
+    // 一定要将这两个置零，才能保证移动之后停下来
+    this.velocityX = 0;
+    this.velocityY = 0;
 };
 
 Player.prototype.render = function() {
