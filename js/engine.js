@@ -55,6 +55,11 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
+
+        // 初始化文本相关属性，方便绘制获胜时的文字
+        ctx.font = '36pt Impact';
+        ctx.textAlign = 'center';
+
         main();
     }
 
@@ -78,8 +83,11 @@ var Engine = (function(global) {
         });
         player.update();
         if (player.hasWon) {
-            console.log('you won');
-            reset();
+            pause();
+            congratsPopup();
+            setTimeout(function() {
+                reset();
+            }, 1000 * 2);
         }
     }
 
@@ -133,7 +141,34 @@ var Engine = (function(global) {
      * 函数调用一次。
      */
     function reset() {
+        ctx.fillStyle = 'white';
+        ctx.fillText('You Won!', canvas.width / 2, 40);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 0;        
+        ctx.strokeText('You Won!', canvas.width / 2, 40);
+        
         player.reset();
+        resume();
+    }
+
+    function pause() {
+        allEnemies.forEach(function(enemy) {
+            enemy.pause();
+        });
+    }
+
+    function resume() {
+        allEnemies.forEach(function(enemy) {
+            enemy.resume();
+        })
+    }
+
+    function congratsPopup() {
+        ctx.fillStyle = 'yellow';
+        ctx.fillText('You Won!', canvas.width / 2, 40);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;        
+        ctx.strokeText('You Won!', canvas.width / 2, 40);
     }
 
     /* 紧接着我们来加载我们知道的需要来绘制我们游戏关卡的图片。然后把 init 方法设置为回调函数。

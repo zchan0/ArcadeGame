@@ -6,10 +6,7 @@ const CanvasSize = {width: 505, height: 606};
  * 这是我们的玩家要躲避的敌人 
  */
 var Enemy = function() {
-    // 要应用到每个敌人的实例的变量写在这里
-    // 我们已经提供了一个来帮助你实现更多
-
-    // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
+    // 敌人的图片或者雪碧图，使用 Resources 中的 get 来加载文件
     this.sprite = 'images/enemy-bug.png';
 
     // 起始位置: 1 <= row <= 3, col = 0
@@ -18,6 +15,7 @@ var Enemy = function() {
 
     // 速度（目前只有 x 方向的速度，y 保持不变。
     this.velocityX = getRandomInt(1, 3) * BlockSize.width;
+    this.oldVelocityX = this.velocityX;
 
     // 图片大小
     this.width = 50;
@@ -40,6 +38,7 @@ Enemy.prototype.update = function(dt) {
         newX = -this.width;
         this.y = getRandomInt(1, 3) * BlockSize.height;
         this.velocityX = getRandomInt(1, 3) * BlockSize.width;
+        this.oldVelocityX = this.velocityX;
     }
     this.x = newX;
 };
@@ -52,6 +51,14 @@ Enemy.prototype.render = function() {
 Enemy.prototype.offscreen = function() {
     if (this.x < 0 || this.x > CanvasSize.width) return true;
     return false;
+}
+
+Enemy.prototype.pause = function() {
+    this.velocityX = 0;
+}
+
+Enemy.prototype.resume = function() {
+    this.velocityX = this.oldVelocityX;
 }
 
 const PlayerStartPoint = {
