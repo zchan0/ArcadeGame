@@ -39,6 +39,7 @@ Enemy.prototype.update = function(dt) {
     if (newX > CanvasSize.width) {
         newX = -this.width;
         this.y = getRandomInt(1, 3) * BlockSize.height;
+        this.velocityX = getRandomInt(1, 3) * BlockSize.width;
     }
     this.x = newX;
 };
