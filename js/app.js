@@ -65,6 +65,7 @@ var Player = function() {
     this.y = PlayerStartPoint.y;
 
     // 速度：一次恰好向前后或者左右移动一个 block
+    // speed 与 velocity 的区别：后者是向量，有方向
     this.speedX = BlockSize.width;
     this.speedY = BlockSize.height;
     this.velocityX = 0;
@@ -82,7 +83,7 @@ Player.prototype.update = function() {
     let newX = this.x + increX;
     let newY = this.y + increY;
 
-    if (newX > CanvasSize.width) {
+    if (newX > CanvasSize.width - this.width) {
         newX = 0;
     }
     if (newX < 0) {
@@ -109,20 +110,20 @@ Player.prototype.render = function() {
 Player.prototype.handleInput = function(direction) {
     switch (direction) {
         case 'left':
-            this.velocityX = -Math.abs(this.speedX);
+            this.velocityX = -this.speedX;
             this.velocityY = 0;
             break;
         case 'up':
             this.velocityX = 0;
-            this.velocityY = -Math.abs(this.speedY);
+            this.velocityY = -this.speedY;
             break;
         case 'right':
-            this.velocityX = Math.abs(this.speedX);
+            this.velocityX = this.speedX;
             this.velocityY = 0;
             break;
         case 'down':
             this.velocityX = 0;
-            this.velocityY = Math.abs(this.speedY);
+            this.velocityY = this.speedY;
             break;
         default:
             this.velocityX = 0;
